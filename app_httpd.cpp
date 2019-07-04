@@ -292,7 +292,11 @@ static esp_err_t stream_handler(httpd_req_t *req){
     return res;
 }
 
-static esp_err_t cmd_handler(httpd_req_t *req){
+enum state {fwd,rev,stp};
+state actstate = stp;
+
+static esp_err_t cmd_handler(httpd_req_t *req)
+{
     char*  buf;
     size_t buf_len;
     char variable[32] = {0,};
@@ -363,7 +367,8 @@ static esp_err_t cmd_handler(httpd_req_t *req){
     else if(!strcmp(variable, "car")) {  
       //If you output PWM to GPIO 15 using ledcWrite, it will lose control.
       if (val==1) {
-        Serial.println("Forward");     
+        Serial.println("Forward");
+        actstate = fwd;     
         ledcWrite(4,speed);  // pin 12
         ledcWrite(3,0);      // pin 13
         ledcWrite(5,speed); // pin 14  
@@ -371,30 +376,34 @@ static esp_err_t cmd_handler(httpd_req_t *req){
         delay(200);
       }
       else if (val==2) {
-        Serial.println("TurnLeft");     
+        Serial.println("TurnLeft");
         ledcWrite(3,0);
-        ledcWrite(4,speed);
-        ledcWrite(6,speed);
         ledcWrite(5,0); 
+        if      (actstate == fwd) { ledcWrite(4,speed); ledcWrite(6,    0); }
+        else if (actstate == rev) { ledcWrite(4,    0); ledcWrite(6,speed); }
+        else                      { ledcWrite(4,speed); ledcWrite(6,speed); }
         delay(100);              
       }
       else if (val==3) {
-        Serial.println("Stop");      
-        ledcWrite(3,0);
+        Serial.println("Stop"); 
+        actstate = stp;       
         ledcWrite(4,0);
-        ledcWrite(6,0);  
+        ledcWrite(3,0);
         ledcWrite(5,0);     
+        ledcWrite(6,0);  
       }
       else if (val==4) {
         Serial.println("TurnRight");
-        ledcWrite(3,speed);
         ledcWrite(4,0);
         ledcWrite(6,0); 
-        ledcWrite(5,speed); 
+        if      (actstate == fwd) { ledcWrite(3,    0); ledcWrite(5,speed); }
+        else if (actstate == rev) { ledcWrite(3,speed); ledcWrite(5,    0); }
+        else                      { ledcWrite(3,speed); ledcWrite(5,speed); }
         delay(100);              
       }
       else if (val==5) {
-        Serial.println("Backward");      
+        Serial.println("Backward");  
+        actstate = rev;      
         ledcWrite(4,0);
         ledcWrite(3,speed);
         ledcWrite(5,0);  
@@ -405,7 +414,7 @@ static esp_err_t cmd_handler(httpd_req_t *req){
       {
         ledcWrite(3, 0);
         ledcWrite(4, 0);  
-        ledcWrite(5,0);  
+        ledcWrite(5, 0);  
         ledcWrite(6, 0);
       }         
     }        

@@ -5,6 +5,7 @@ ESP32-CAM Remote Control
 const char* ssid = "FSM";
 const char* password = "0101010101";
 
+#include "esp_wifi.h"
 #include "esp_camera.h"
 #include <WiFi.h>
 #include "soc/soc.h"
@@ -170,6 +171,7 @@ void setup() {
   Serial.println("password: " + (String)password);
   
   WiFi.begin(ssid, password);
+  delay(500);
 
   long int StartTime=millis();
   while (WiFi.status() != WL_CONNECTED) 
@@ -178,6 +180,13 @@ void setup() {
       if ((StartTime+10000) < millis()) break;
   } 
 
+  /*
+  int8_t power;
+  esp_wifi_set_max_tx_power(20);
+  esp_wifi_get_max_tx_power(&power);
+  Serial.printf("wifi power: %d \n",power); 
+  */
+  
   startCameraServer();
 
   if (WiFi.status() == WL_CONNECTED) {
@@ -211,5 +220,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  delay(10000);
+  delay(1000);
+  Serial.printf("RSSi: %ld dBm\n",WiFi.RSSI()); 
 }
