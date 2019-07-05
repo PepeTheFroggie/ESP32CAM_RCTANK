@@ -11,5 +11,8 @@ Control:
 Build:
 ![DSC02365.jpg](DSC02365.jpg "Build")
 
+Extern antenna:
+![DSC02372.jpg](DSC02372.jpg "extant")
+
 Run:
 https://youtu.be/qUAGnk382mc
