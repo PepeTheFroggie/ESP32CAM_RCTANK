@@ -1,13 +1,6 @@
-/*
-ESP32-CAM Remote Control Car 
-Author : ChungYi Fu (Kaohsiung, Taiwan)  2019-6-1 02:00
-https://www.facebook.com/francefu
-
-Motor Driver IC -> gpio12, gpio13, gpio14, gpio15
-*/
 
 #include <esp32-hal-ledc.h>
-int speed = 255;  //You can adjust the speed of the wheel. (gpio12, gpio13)
+int speed = 255;  
 int noStop = 0;
 
 
@@ -17,27 +10,7 @@ int noStop = 0;
 #include "img_converters.h"
 #include "Arduino.h"
 
-#include "fb_gfx.h"
-#include "fd_forward.h"
 #include "dl_lib.h"
-#include "fr_forward.h"
-
-#define FACE_COLOR_WHITE  0x00FFFFFF
-#define FACE_COLOR_BLACK  0x00000000
-#define FACE_COLOR_RED    0x000000FF
-#define FACE_COLOR_GREEN  0x0000FF00
-#define FACE_COLOR_BLUE   0x00FF0000
-#define FACE_COLOR_YELLOW (FACE_COLOR_RED | FACE_COLOR_GREEN)
-#define FACE_COLOR_CYAN   (FACE_COLOR_BLUE | FACE_COLOR_GREEN)
-#define FACE_COLOR_PURPLE (FACE_COLOR_BLUE | FACE_COLOR_RED)
-
-typedef struct {
-        size_t size; //number of values used for filtering
-        size_t index; //current value index
-        size_t count; //value count
-        int sum;
-        int * values; //array to be filled with values
-} ra_filter_t;
 
 typedef struct {
         httpd_req_t *req;
@@ -49,41 +22,8 @@ static const char* _STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" 
 static const char* _STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";
 
-static ra_filter_t ra_filter;
 httpd_handle_t stream_httpd = NULL;
 httpd_handle_t camera_httpd = NULL;
-
-static mtmn_config_t mtmn_config = {0};
-static int8_t detection_enabled = 0;
-static int8_t recognition_enabled = 0;
-
-static ra_filter_t * ra_filter_init(ra_filter_t * filter, size_t sample_size){
-    memset(filter, 0, sizeof(ra_filter_t));
-
-    filter->values = (int *)malloc(sample_size * sizeof(int));
-    if(!filter->values){
-        return NULL;
-    }
-    memset(filter->values, 0, sample_size * sizeof(int));
-
-    filter->size = sample_size;
-    return filter;
-}
-
-static int ra_filter_run(ra_filter_t * filter, int value){
-    if(!filter->values){
-        return value;
-    }
-    filter->sum -= filter->values[filter->index];
-    filter->values[filter->index] = value;
-    filter->sum += filter->values[filter->index];
-    filter->index++;
-    filter->index = filter->index % filter->size;
-    if (filter->count < filter->size) {
-        filter->count++;
-    }
-    return filter->sum / filter->count;
-}
 
 static size_t jpg_encode_stream(void * arg, size_t index, const void* data, size_t len){
     jpg_chunking_t *j = (jpg_chunking_t *)arg;
@@ -115,7 +55,7 @@ static esp_err_t capture_handler(httpd_req_t *req){
     size_t out_len, out_width, out_height;
     uint8_t * out_buf;
     bool s;
-    if(!detection_enabled || fb->width > 400){
+    {
         size_t fb_len = 0;
         if(fb->format == PIXFORMAT_JPEG){
             fb_len = fb->len;
@@ -173,13 +113,6 @@ static esp_err_t stream_handler(httpd_req_t *req){
     uint8_t * _jpg_buf = NULL;
     char * part_buf[64];
     dl_matrix3du_t *image_matrix = NULL;
-    bool detected = false;
-    int face_id = 0;
-    int64_t fr_start = 0;
-    int64_t fr_ready = 0;
-    int64_t fr_face = 0;
-    int64_t fr_recognize = 0;
-    int64_t fr_encode = 0;
 
     static int64_t last_frame = 0;
     if(!last_frame) {
@@ -192,19 +125,12 @@ static esp_err_t stream_handler(httpd_req_t *req){
     }
 
     while(true){
-        detected = false;
-        face_id = 0;
         fb = esp_camera_fb_get();
         if (!fb) {
             Serial.println("Camera capture failed");
             res = ESP_FAIL;
         } else {
-            fr_start = esp_timer_get_time();
-            fr_ready = fr_start;
-            fr_face = fr_start;
-            fr_encode = fr_start;
-            fr_recognize = fr_start;
-            if(!detection_enabled || fb->width > 400){
+             {
                 if(fb->format != PIXFORMAT_JPEG){
                     bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
                     esp_camera_fb_return(fb);
@@ -216,33 +142,6 @@ static esp_err_t stream_handler(httpd_req_t *req){
                 } else {
                     _jpg_buf_len = fb->len;
                     _jpg_buf = fb->buf;
-                }
-            } else {
-
-                image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
-
-                if (!image_matrix) {
-                    Serial.println("dl_matrix3du_alloc failed");
-                    res = ESP_FAIL;
-                } else {
-                    if(!fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item)){
-                        Serial.println("fmt2rgb888 failed");
-                        res = ESP_FAIL;
-                    } else {
-                        fr_ready = esp_timer_get_time();
-                        box_array_t *net_boxes = NULL;
-                        if(detection_enabled){
-                            net_boxes = face_detect(image_matrix, &mtmn_config);
-                        }
-                        fr_face = esp_timer_get_time();
-                        fr_recognize = fr_face;
-
-                        _jpg_buf = fb->buf;
-                        _jpg_buf_len = fb->len;
-                        
-                        fr_encode = esp_timer_get_time();
-                    }
-                    dl_matrix3du_free(image_matrix);
                 }
             }
         }
@@ -268,23 +167,12 @@ static esp_err_t stream_handler(httpd_req_t *req){
             break;
         }
         int64_t fr_end = esp_timer_get_time();
-
-        int64_t ready_time = (fr_ready - fr_start)/1000;
-        int64_t face_time = (fr_face - fr_ready)/1000;
-        int64_t recognize_time = (fr_recognize - fr_face)/1000;
-        int64_t encode_time = (fr_encode - fr_recognize)/1000;
-        int64_t process_time = (fr_encode - fr_start)/1000;
-        
         int64_t frame_time = fr_end - last_frame;
         last_frame = fr_end;
         frame_time /= 1000;
-        uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
-        Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps), %u+%u+%u+%u=%u %s%d\n",
+        Serial.printf("MJPG: %uB %ums (%.1ffps)\n",
             (uint32_t)(_jpg_buf_len),
-            (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
-            avg_frame_time, 1000.0 / avg_frame_time,
-            (uint32_t)ready_time, (uint32_t)face_time, (uint32_t)recognize_time, (uint32_t)encode_time, (uint32_t)process_time,
-            (detected)?"DETECTED ":"", face_id
+            (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time           
         );
     }
 
@@ -365,14 +253,13 @@ static esp_err_t cmd_handler(httpd_req_t *req)
       ledcWrite(8,10*val);
     }     
     else if(!strcmp(variable, "car")) {  
-      //If you output PWM to GPIO 15 using ledcWrite, it will lose control.
       if (val==1) {
         Serial.println("Forward");
         actstate = fwd;     
         ledcWrite(4,speed);  // pin 12
         ledcWrite(3,0);      // pin 13
-        ledcWrite(5,speed); // pin 14  
-        ledcWrite(6,0);     // pin 15   
+        ledcWrite(5,speed);  // pin 14  
+        ledcWrite(6,0);      // pin 15   
         delay(200);
       }
       else if (val==2) {
@@ -488,8 +375,6 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
 
 static esp_err_t index_handler(httpd_req_t *req){
     httpd_resp_set_type(req, "text/html");
-    //httpd_resp_set_hdr(req, "Content-Encoding", "gzip");
-    //return httpd_resp_send(req, (const char *)index_html_gz, index_html_gz_len);
     return httpd_resp_send(req, (const char *)INDEX_HTML, strlen(INDEX_HTML));
 }
 
@@ -531,20 +416,6 @@ void startCameraServer()
         .handler   = stream_handler,
         .user_ctx  = NULL
     };
-
-
-    ra_filter_init(&ra_filter, 20);
-    
-    mtmn_config.min_face = 80;
-    mtmn_config.pyramid = 0.7;
-    mtmn_config.p_threshold.score = 0.6;
-    mtmn_config.p_threshold.nms = 0.7;
-    mtmn_config.r_threshold.score = 0.7;
-    mtmn_config.r_threshold.nms = 0.7;
-    mtmn_config.r_threshold.candidate_number = 4;
-    mtmn_config.o_threshold.score = 0.7;
-    mtmn_config.o_threshold.nms = 0.4;
-    mtmn_config.o_threshold.candidate_number = 1;
     
     Serial.printf("Starting web server on port: '%d'\n", config.server_port);
     if (httpd_start(&camera_httpd, &config) == ESP_OK) {

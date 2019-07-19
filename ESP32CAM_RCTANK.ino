@@ -108,8 +108,9 @@ void initServo()
   ledcAttachPin(ServoPin, 8); 
 }
 
-void setup() {
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+void setup() 
+{
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
   
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -189,15 +190,13 @@ void setup() {
   
   startCameraServer();
 
-  if (WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED) 
+  {
     Serial.println("");
     Serial.println("WiFi connected");    
     Serial.print("Camera Ready! Use 'http://");
     Serial.print(WiFi.localIP());
     Serial.println("' to connect");
-    char* apssid = "ESP32-CAM";
-    char* appassword = "12345678";         //AP password require at least 8 characters.
-    WiFi.softAP((WiFi.localIP().toString()+"_"+(String)apssid).c_str(), appassword);    
   } else {
     Serial.println("");
     Serial.println("WiFi disconnected");      

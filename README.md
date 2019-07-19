@@ -14,5 +14,5 @@ Build:
 Extern antenna:
 ![DSC02372.jpg](DSC02372.jpg "extant")
 
-Run:
+Video:
 https://youtu.be/qUAGnk382mc
