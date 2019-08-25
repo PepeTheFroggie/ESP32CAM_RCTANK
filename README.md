@@ -5,6 +5,7 @@ Serial console tells you where to connect. And use your own wifi credentials, no
 
 Wiring:
 ![esp32cam.jpg](esp32cam.jpg "Wiring")
+For the $2 motor dirver search "L298N Motor Driver".
 
 Control:
 ![DSC02367.jpg](DSC02367.jpg "Control")
