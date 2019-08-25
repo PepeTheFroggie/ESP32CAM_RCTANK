@@ -12,6 +12,7 @@ Control:
 
 Build:
 ![DSC02365.jpg](DSC02365.jpg "Build")
+ESP-Cam, motor driver, 5V switching regulator.
 
 Extern antenna:
 ![DSC02372.jpg](DSC02372.jpg "extant")
