@@ -10,7 +10,7 @@ int noStop = 0;
 #include "img_converters.h"
 #include "Arduino.h"
 
-#include "dl_lib.h"
+#include "dl_lib_matrix3d.h"
 
 typedef struct {
         httpd_req_t *req;
