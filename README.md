@@ -17,5 +17,8 @@ ESP-Cam, motor driver, 5V switching regulator.
 Extern antenna:
 ![DSC02372.jpg](DSC02372.jpg "extant")
 
+ESP32£CAM pinout:
+![ESP32-CAM-pinout-new.png](ESP32-CAM-pinout-new.png "pinout")
+
 Video:
 https://youtu.be/qUAGnk382mc
