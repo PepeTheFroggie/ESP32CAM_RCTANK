@@ -19,7 +19,8 @@ Extern antenna:
 
 ESP32CAM pinout:
 ![ESP32-CAM-pinout-new.png](ESP32-CAM-pinout-new.png "pinout")
-If you experience streaming problems or low wifi range try anther xclk frequency like 16mhz. 
+If you experience streaming problems or low wifi range try anther xclk frequency like 16mhz.
+
 Line: config.xclk_freq_hz = 16000000; 
 
 
