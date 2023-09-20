@@ -21,6 +21,7 @@ ESP32CAM pinout:
 ![ESP32-CAM-pinout-new.png](ESP32-CAM-pinout-new.png "pinout")
 If you experience streaming problems or low wifi range try anther xclk frequency like 16mhz.
 Line: config.xclk_freq_hz = 16000000; 
+
 Be aware this motor driver is only good for up to 7.2V. On 12V systems you will have to replace the R and zehner diode making 5V with a small 7805.
 
 Video:
