@@ -26,3 +26,6 @@ Be aware this motor driver is only good for up to 7.2V. On 12V systems you will 
 
 Video:
 https://youtu.be/qUAGnk382mc
+
+New simple version "ESP32webCAM_RCTANK" without the bulky script stuff:
+![625842.jpg](625842.jpg ""ESP32webCAM_RCTANK)
