@@ -30,5 +30,7 @@ https://youtu.be/qUAGnk382mc
 New simple version "ESP32webCAM_RCTANK" without the bulky script stuff, with auto reconnect and "scan wifi" to allow multiple AP's on different channels with same SSID:
 ![625843.jpg](625843.jpg "ESP32webCAM_RCTANK")
 
-Vidoe of newest version, the "ESP32webCAM_RCTANKkbd" keyboard controlled thing:
+
+Video of newest version, the "ESP32webCAM_RCTANKkbd" keyboard controlled thing
+
 https://www.youtube.com/watch?v=SipgQSjRhd0
