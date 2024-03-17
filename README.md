@@ -35,3 +35,7 @@ New simple version "ESP32webCAM_RCTANK" without the bulky script stuff, with aut
 Video of newest version, the "ESP32webCAM_RCTANKkbd" keyboard controlled thing
 
 https://www.youtube.com/watch?v=SipgQSjRhd0
+--------------------------------------------------
+Newest version uses UDP to control motors.
+This need a special UDP transmitter.
+
