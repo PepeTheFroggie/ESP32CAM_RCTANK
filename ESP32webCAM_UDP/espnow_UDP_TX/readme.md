@@ -8,3 +8,5 @@ Be aware the setting is not permanent, hard-code it in firmware.
 This does 6 channels at variable rate. Set 100ms for car and 50ms or less for airborne.
 
 ![DSC02359.jpg](DSC02359.jpg "Wiring")
+
+Understand the RC does not go from TX to RX, but TX goes to your router and is then redispatched to RX. A good position for your AP is mandatory. You may also use different wired AP's on the same subnet.
