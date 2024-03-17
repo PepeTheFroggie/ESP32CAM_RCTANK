@@ -36,6 +36,8 @@ Video of newest version, the "ESP32webCAM_RCTANKkbd" keyboard controlled thing
 
 https://www.youtube.com/watch?v=SipgQSjRhd0
 --------------------------------------------------
-Newest version uses UDP to control motors.
-This need a special UDP transmitter.
+Newest version ESP32webCAM_UDP uses UDP to control motors.
+This need a special UDP transmitter. See esp8266 based espnow_UDP_TX
+
+
 
