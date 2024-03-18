@@ -14,3 +14,5 @@ Yes, if you set your NAT this works world-wide.
 
 TX settings
 ![Clipboard01.jpg](Clipboard01.jpg "Settings")
+
+BTW to set stuff press first the "senden" button and then the "write to eeprom" button.
