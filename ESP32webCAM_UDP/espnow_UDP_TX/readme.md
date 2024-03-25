@@ -15,5 +15,6 @@ Yes, if you set your NAT this works world-wide.
 TX settings
 ![Clipboard01.jpg](Clipboard01.jpg "Settings")
 
-BTW to set stuff press first the "senden" button and then the "write to eeprom" button.
+BTW to set stuff press first the "senden" button and then the "write to eeprom" button. The "make fake RC" is used for testing.
+
 To extend the range you may use "wired repeater". Those are AP's with in wired repeater mode connected by cat5 wire. The $15 xiaomi C4 i use need to be reset daily or it clogs up, use app "planned restart" feature.
