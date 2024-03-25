@@ -42,5 +42,5 @@ Version ESP32webCAM_UDP uses UDP to control motors.This need a special UDP trans
 Understand the RC does not go from TX to RX, but TX goes to your router and is then redispatched to RX.
 This is by far the smoothest control. Uses first aux channel for fwd/rev and second for light on/off.
 
-
+https://www.youtube.com/shorts/Xo_1b1SBKy8
 
