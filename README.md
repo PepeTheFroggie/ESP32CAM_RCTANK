@@ -33,7 +33,7 @@ New simple version "ESP32webCAM_RCTANK" without the bulky script stuff, with aut
 
 --------------------------------------------------
 
-ESP32webCAM_RCTANKkbd is a Video noscript / keyboard version, keyboard arrows or numpad controlled.
+ESP32webCAM_RCTANKkbd is keyboard version, usre keyboard arrows or numpad to control.
 
 --------------------------------------------------
 
